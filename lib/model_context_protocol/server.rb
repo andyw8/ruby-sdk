@@ -6,6 +6,8 @@ require_relative "methods"
 
 module ModelContextProtocol
   class Server
+    DEFAULT_VERSION = "0.1.0"
+
     class RequestHandlerError < StandardError
       attr_reader :error_type
       attr_reader :original_error
@@ -21,10 +23,11 @@ module ModelContextProtocol
     include Instrumentation
 
     attr_writer :capabilities
-    attr_accessor :name, :tools, :prompts, :resources, :server_context, :configuration
+    attr_accessor :name, :version, :tools, :prompts, :resources, :server_context, :configuration
 
     def initialize(
       name: "model_context_protocol",
+      version: DEFAULT_VERSION,
       tools: [],
       prompts: [],
       resources: [],
@@ -34,6 +37,7 @@ module ModelContextProtocol
       capabilities: nil
     )
       @name = name
+      @version = version
       @tools = tools.to_h { |t| [t.name_value, t] }
       @prompts = prompts.to_h { |p| [p.name_value, p] }
       @resources = resources
@@ -169,7 +173,7 @@ module ModelContextProtocol
     def server_info
       @server_info ||= {
         name:,
-        version: ModelContextProtocol::VERSION,
+        version:,
       }
     end
 
